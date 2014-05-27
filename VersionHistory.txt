@@ -1,0 +1,50 @@
+Version: 0.0
+Purpose: A rough prototype created before proper documentation and meant purely for the use of the game 'DragonSlayer!'
+
+Version: 1.0
+Purpose: Convert the prototype into Object-Orientated Programming style
+Changes Include:
+    - Library turned into classes: Drawings, Borders, Frames, TextFields, Jigsaws
+    - Seperated from DS-specific library
+    - Merged redundant methods by adding more parameters
+
+Version: 1.1
+Prupose: Add more functionality to the library for use as a basic python-command-line formatter or ASCII-text-art management
+Changes Include:
+    - New Feature: Frames (can be used for resizeable banners)
+    - More support for importing personal ASCII art (formatting, saving/exporting)
+    - Drawing.overlayDrawings now uses outer-whitespace detection from top-bottom and vice versa for more accurate overlays
+    - Added some table related methods to TextField
+    - Added bullets/numbering/indentation to TextField, including drawing-bullets
+	- Began setting up minor testing procedures using python scripts
+	
+Version: 1.2
+Purpose: Add an ASCII-font option for art-based text and add a "screen" class to deal with designated screen divisions (top-bottom, left-right, etcc) with customizable borders
+
+Changes Include:
+	- Separated Classes into seperate modules for ease of programming/editing
+	- Created a test-font: font-basic.py
+To Do:
+	- Add Class: AsciiFont (manages the entire font set)
+		- concept: each font will be stored in a file, with each letter following the format.  Then they can be stored/manipulated without excess data required
+			"char: (char here)"
+			"charimage"
+			"charimage"
+			"charimage"
+			- after the charimage, extra spaces ( " " ) should be added on new lines to make up for the remaining space underneath the character to compensate for letters that may dip below the baseline
+			- warning!  a "" is just empty line and not part of the image, but " " is the extra space and part of the image
+		- members: 
+			- hashtable to store available asciichars (using the ascii-int number as the hash)
+			- defaultSpacingWidth (how many whitespace chars in between words)
+			- compressedBool (determines whether words are compressedHorizontally before added to the full string in order to reduce whitespace between characters)
+		- methods required: 
+			- initialize from file (loadFont)
+				- initialize each character and stores it as the current font to use
+			- convert a string into an asciifont drawing (generateAsciiText)
+			- convert a single word into an asciifront drawing (generateAsciiWord)
+		- things to consider:
+			- simulate word wrap?
+			- prepare for features such as: underline, overline, strike-out
+	- Add "Screen" section to class "Border":
+		- concept: adds borders (or an "empty border") around given images and assembles them according to pre-determined screen layouts (though somewhat customizable)
+		- possible screens:  top-bottom, topleft-bottomleft-right
