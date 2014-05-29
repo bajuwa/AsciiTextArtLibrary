@@ -3,7 +3,7 @@
 #For use in ASCIIlib Version: 1.2
 
 #Imports required:
-from drawing_v1_2 import *
+from drawing import *
 
 
 ######################
@@ -41,14 +41,6 @@ class Border:
         return self._corners
 
     def setCorners(self, arrayOfCorners):
-        if type(arrayOfBorders) is not list:
-            return 1
-        if len(arrayOfCorners) == 4:
-            for i in range(0, 4):
-                if (type(arrayOfCorners[i]) is not str) or (len(arrayOfCorners[i]) != 1):
-                    return 1
-        else:
-            return 1
         self._corners = arrayOfCorners
         return 0
     
@@ -56,14 +48,6 @@ class Border:
         return self._borders
 
     def setBorders(self, arrayOfBorders):
-        if type(arrayOfBorders) is not list:
-            return 1
-        if len(arrayOfBorders) == 4:
-            for i in range(0, 4):
-                if (type(arrayOfBorders[i]) is not str) or (len(arrayOfBorders[i]) != 1):
-                    return 1
-        else:
-            return 1
         self._borders = arrayOfBorders
         return 0
 
@@ -102,11 +86,6 @@ class Frame:
     ########################
 
     def __init__(self, top, left, right, bottom):
-        if type(top) is not Drawing or \
-           type(left) is not Drawing or \
-           type(right) is not Drawing or \
-           type(bottom) is not Drawing:
-            return 1
         self._topDrawing = copy.deepcopy(top)
         self._leftDrawing = copy.deepcopy(left)
         self._rightDrawing = copy.deepcopy(right)
@@ -149,59 +128,38 @@ class Frame:
         return self._bottomRepeat
 
     def setTop(self, drawing):
-        if type(drawing) is not Drawing:
-            return 1
         _topDrawing = copy.deepcopy(drawing)
         return 0
 
     def setLeft(self, drawing):
-        if type(drawing) is not Drawing:
-            return 1
         _leftDrawing = copy.deepcopy(drawing)
         return 0
 
     def setRight(self, drawing):
-        if type(drawing) is not Drawing:
-            return 1
         _rightDrawing = copy.deepcopy(drawing)
         return 0
 
     def setBottom(self, drawing):
-        if type(drawing) is not Drawing:
-            return 1
         _bottomDrawing = copy.deepcopy(drawing)
         return 0
 
     def setTopAlign(self, string):
-        if type(string) is not str:
-            return 1
         self._topAlign = string
         return 0
 
     def setLeftAlign(self, string):
-        if type(string) is not str:
-            return 1
         self._leftAlign = string
         return 0
 
     def setRightAlign(self, string):
-        if type(string) is not str:
-            return 1
         self._rightAlign = string
         return 0
 
     def setBottomAlign(self, string):
-        if type(string) is not str:
-            return 1
         self._bottomAlign = string
         return 0
 
     def setAlignments(self, top, left, right, bottom):
-        if top not in ["left", "center", "right"] or \
-           left not in ["top", "center", "bottom"] or \
-           right not in ["top", "center", "bottom"] or \
-           bottom not in ["left", "center", "right"]:
-            return 1
         self._topAlign = top
         self._leftAlign = left
         self._rightAlign = right
@@ -209,35 +167,22 @@ class Frame:
         return 0
 
     def setTopRepeat(self, boolean):
-        if type(boolean) is not bool:
-            return 1
         self._topRepeat = boolean
         return 0
 
     def setLeftRepeat(self, boolean):
-        if type(boolean) is not bool:
-            return 1
         self._leftRepeat = boolean
         return 0
 
     def setRightRepeat(self, boolean):
-        if type(boolean) is not bool:
-            return 1
         self._rightRepeat = boolean
         return 0
 
     def setBottomRepeat(self, boolean):
-        if type(boolean) is not bool:
-            return 1
         self._bottomRepeat = boolean
         return 0
 
     def setRepeats(self, top, left, right, bottom):
-        if type(top) is not bool or\
-           type(left) is not bool or\
-           type(right) is not bool or\
-           type(bottom) is not bool:
-            return 1
         self._topRepeat = top
         self._leftRepeat = left
         self._rightRepeat = right
@@ -334,15 +279,7 @@ class Frame:
     
     #Purpose: Frames a drawing with a given Frame object, with a certain amount of padding in between the two
     #Note: This is a class method as opposed to instance method because it is not as easy to reverse as a regular Border
-    def addFrameToDrawing(drawing, frame, LRAlign, TBAlign, padding):
-        #Do a type check and return 1 for error
-        if type(drawing) is not Drawing or \
-           type(frame) is not Frame or \
-           LRAlign not in ["center", "left", "right"] or \
-           TBAlign not in ["center", "top", "bottom"] or \
-           type(padding) is not int:
-            return 1
-        
+    def addFrameToDrawing(drawing, frame, LRAlign, TBAlign, padding):        
         #Buffer the center image to account for padding
         center = copy.deepcopy(drawing)
         center.bufferAlign("center", "center", center.getWidth()+(padding*2), center.getHeight()+(padding*2))

@@ -345,8 +345,9 @@ class Drawing:
     #Purpose: Buffers each drawing of an array of drawings to the same height
     def bufferToSameHeight(arrayOfDrawings, TBAlign, targetHeight):
         copyDrawings = []
-        for drawing in arrayOfDrawings:
-            copyDrawings.append(copy.deepcopy(drawing).bufferAlign("center", TBAlign, drawing.getWidth(), targetHeight))
+        for i in range(len(arrayOfDrawings)):
+            copyDrawings.append(copy.deepcopy(arrayOfDrawings[i]))
+            copyDrawings[i].bufferAlign("center", TBAlign, arrayOfDrawings[i].getWidth(), targetHeight)
         return copyDrawings
     
     #Purpose: Combine an array of drawings, in order, in a row, aligned as specified

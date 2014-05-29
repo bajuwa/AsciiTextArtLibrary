@@ -3,7 +3,7 @@
 #For use in ASCIIlib Version: 1.2
 
 #Imports required:
-from drawing_v1_2 import *
+from drawing import *
 
 
 ##############################
@@ -28,20 +28,10 @@ class Jigsaw(Drawing):
     ########################
 
     def __init__(self, newBase, newPieces):
-        if type(newBase) is not JigsawBase or \
-           type(newPieces) is not list:
-            print("Error: parameter type mismatch in Jigsaw.__init__()")
-            self._base = JigsawBase("", [])
-            self._pieces = []
-            return 1
-        for piece in newPieces:
-            if type(piece) is not JigsawPiece:
-                print("Error: parameter type mismatch in Jigsaw.__init__()")
-                return 1
         self._base = copy.deepcopy(newBase)
         self._pieces = copy.deepcopy(newPieces)
         self.assembleJigsawDrawing()
-        super().__init__(self.getDrawing())
+        super().__init__(self._drawing)
         return
 
     def getBase(self):
@@ -51,18 +41,9 @@ class Jigsaw(Drawing):
         return self._pieces
 
     def setBase(self, newBase):
-        if type(newBase) is not JigsawBase:
-            print("Error: parameter type mismatch in Jigsaw.setBase()")
-            return 1
         self._base = copy.deepcopy(newBase)
 
     def setPiece(self, singlePiece, index):
-        if type(singlePiece) is not JigsawPiece or \
-           type(index) is not int or \
-           index >= len(self._pieces) or \
-           index < 0:
-            print("Error: parameter type mismatch in Jigsaw.setBase()")
-            return 1
         self._pieces[index] = copy.deepcopy(singlePiece)
         
     #takes two pieces that were created as 'puzzle piece' and sticks them together
@@ -72,7 +53,7 @@ class Jigsaw(Drawing):
     def assembleJigsawDrawing(self):
         base = copy.deepcopy(self.getBase())
 
-        for i in range(0, len(base.getAnchorPoints())):
+        for i in range(len(base.getAnchorPoints())):
             #prep both pieces
             overlay = copy.deepcopy(self.getPieces()[i])
             #make base big enough to accomodate the new piece
@@ -131,56 +112,25 @@ class JigsawBase(Drawing):
 
     #Note: Will default the init method if any of the anchor points appear more/less than once in a given base
     def __init__(self, basePseudoDrawing, anchorPoints):
-        if type(basePseudoDrawing) is not list or\
-           type(anchorPoints) is not list:
-            print("Error: parameter type mismatch in JigsawBase __init__()")
-            return 1
-        for anchor in anchorPoints:
-            if type(anchor) is not str or\
-               len(anchor) != 1:
-                print("Error: parameter type mismatch in JigsawBase __init__()")
-                return 1
         #Calculate how many of each anchor point are in the pseudodrawing, and only procede if there is only 1 of each anchor point    
         count = [0] * len(anchorPoints) #each element in count refers to the relative element in anchor points
         for row in basePseudoDrawing:
             for character in row:
-                for i in range(0, len(anchorPoints)):
-                    if character == anchorPoints[i]:
+                for anchor in anchorPoints:
+                    if character == anchor:
                         count[i] += 1
-        #now check to make sure each element in count is 1
-        for element in count:
-            if element != 1:
-                print("Error: Incorrect number of instances of an anchor point (only 1 instance allowed)")
-                return 1
 
         super().__init__(basePseudoDrawing)
         self._arrayOfAnchorPoints = copy.deepcopy(anchorPoints)
 
     #Purpose: Act as secondary constructor for formatted drawings where first element is the anchorPoints array, and rest is the drawing
     def initFromFormattedJBDrawing(formattedDrawing):
-        if type(formattedDrawing) is not list or \
-           type(formattedDrawing[0]) is not list:
-            print("Error: parameter type mismatch in JigsawBase.initFromFormattedJBDrawing")
-            return 1
-        for anchor in formattedDrawing[0]:
-            if type(anchor) is not str or\
-               len(anchor) != 1:
-                print("Error: parameter type mismatch in JigsawBase.initFromFormattedJBDrawing")
-                return 1
         return JigsawBase(formattedDrawing[1:], formattedDrawing[0])
         
     def getAnchorPoints(self):
         return self._arrayOfAnchorPoints
 
     def setAnchorPoints(self, anchors):
-        if type(anchors) is not list:
-            print("Error: parameter type mismatch in JigsawBase.setAnchorPoints()")
-            return 1
-        for a in anchors:
-            if type(a) is not str or \
-               len(a) != 1:
-                print("Error: parameter type mismatch in JigsawBase.setAnchorPoints()")
-                return 1
         self._arrayOfAnchorPoints = anchors
 
 
@@ -205,35 +155,12 @@ class JigsawPiece(Drawing):
     ########################
 
     def __init__(self, pseudoDrawing, joint, mend):
-        if type(pseudoDrawing) is not list or\
-           type(joint) is not str or \
-           len(joint) != 1 or \
-           type(mend) is not str or \
-           len(mend) != 1:
-            print("Error: parameter type mismatch in JigsawPiece.__init__()")
-            return 1
-        for row in pseudoDrawing:
-            if type(row) is not str:
-                print("Error: parameter type mismatch in JigsawPiece.__init__()")
-                return 1
         self._joint = joint
         self._mend = mend
         super().__init__(pseudoDrawing)
 
     #Purpose: Act as secondary constructor for a formatted drawings where first element is the anchor/joint, second is the mend, and rest is the drawing
     def initFromFormattedJPDrawing(formattedDrawing):
-        if type(formattedDrawing) is not list or\
-           len(formattedDrawing) < 3 or \
-           type(formattedDrawing[0]) is not str or \
-           len(formattedDrawing[0]) != 1 or \
-           type(formattedDrawing[1]) is not str or \
-           len(formattedDrawing[1]) != 1:
-            print("Error: parameter type mismatch in JigsawPiece.initFromFormattedJPDrawing")
-            return 1
-        for row in formattedDrawing:
-            if type(row) is not str:
-                print("Error: parameter type mismatch in JigsawPiece.initFromFormattedJPDrawing")
-                return 1
         return JigsawPiece(formattedDrawing[2:], formattedDrawing[0], formattedDrawing[1])
 
     def getJoint(self):
@@ -244,19 +171,16 @@ class JigsawPiece(Drawing):
 
     #Purpose: returns the pseudo-drawing after the mend has replaced the joint char on the JP drawing
     def getMendedDrawing(self):
-        tempDrawing = copy.deepcopy(self.getDrawing())
-        for i in range(0, len(tempDrawing)): #iterate over rows
+        tempDrawing = copy.deepcopy(self._drawing)
+        for i in range(len(tempDrawing)): #iterate over rows
             tempRow = tempDrawing[i]
-            for j in range(0, len(tempRow)): #iterate over chars in row
+            for j in range(len(tempRow)): #iterate over chars in row
                 if tempRow[j] == self.getJoint():
                     tempRow = tempRow[:j] + self.getMend() + tempRow[j+1:]
                     return (tempDrawing[:i] + [tempRow] + tempDrawing[i+1:])
         return 1 #getting here means the mend was not found/fixed, so return error
 
     def setPrefferedAnchorIndex(self, anchorIndex):
-        if type(anchorIndex) is not int:
-            print("Error: parameter type mismatch in JigsawPiece.setPrefferedAnchorIndex")
-            return 1
         self._attachToBaseIndexNum = anchorIndex
         return
         

@@ -3,7 +3,7 @@
 #For use in ASCIIlib Version: 1.2
 
 #Imports required:
-from drawing_v1_2 import *
+from drawing import *
 
 ##########################
 ###Classes - Text Field###
@@ -25,15 +25,6 @@ class TextField(Drawing):
     ########################
 
     def __init__(self, arrayOfParagraphs):
-        if type(arrayOfParagraphs) is not list:
-            #TEST:
-            print("type(arrayOfParagraphs) is not list, it's a "+str(type(arrayOfParagraphs)))
-            return 1
-        for item in arrayOfParagraphs:
-            if type(item) is not str:
-                #TEST:
-                print("type(item) is not str, "+str(item)+" is a "+str(type(item)))
-                return 1
         self._paragraphs = copy.deepcopy(arrayOfParagraphs)
         self._drawing = copy.deepcopy(arrayOfParagraphs)
         self._original = copy.deepcopy(arrayOfParagraphs)
@@ -50,9 +41,6 @@ class TextField(Drawing):
 
     #Purpose: Indents each paragraph by a certain number of spaces
     def addIndentation(self, numOfSpacesToIndent):
-        if type(numOfSpacesToIndent) is not int or \
-           numOfSpacesToIndent < 0:
-            return 1
         for i in range(0, len(self._paragraphs)):
             self._paragraphs[i] = " "*numOfSpacesToIndent + self._paragraphs[i]
         return 0
@@ -65,11 +53,6 @@ class TextField(Drawing):
     
     #Purpose: Add Basic single-char bullet points to each paragraph
     def addBasicBullets(self, bulletChar, indentationBetweenNumAndText):
-        if type(indentationBetweenNumAndText) is not int or \
-           type(bulletChar) is not str or \
-           len(bulletChar) != 1 or \
-           indentationBetweenNumAndText < 0:
-            return 1
         for i in range(0, len(self._paragraphs)):
             self._paragraphs[i] = bulletChar+" "*indentationBetweenNumAndText + self._paragraphs[i]
         return 0
@@ -83,12 +66,6 @@ class TextField(Drawing):
 
     #Purpose: Adds numbering to each paragraph, starting at a starting number, incrementing by a certain value each time, and followed by a char (possibly bracket or period) and indentation
     def addNumbering(self, rangeOfNumbers, charAfterNumber, indentationBetweenNumAndText):
-        if type(rangeOfNumbers) is not range or \
-           type(charAfterNumber) is not str or \
-           len(charAfterNumber) != 1 or \
-           type(indentationBetweenNumAndText) is not int or \
-           indentationBetweenNumAndText < 0:
-            return 1
         for i in range(0, len(self._paragraphs)):
             self._paragraphs[i] = str(rangeOfNumbers[i%len(rangeOfNumbers)])+charAfterNumber+" "*indentationBetweenNumAndText + self._paragraphs[i]
         return 0
@@ -107,13 +84,6 @@ class TextField(Drawing):
 
     #Purpose: Converts the paragraphs into Drawing object that's formatted with a certain alignment
     def formatParagraph(textField, targetWidth, LRAlign):
-        if type(targetWidth) is not int or \
-           targetWidth <= 0 or \
-           type(textField) is not TextField or \
-           type(LRAlign) is not str or \
-           LRAlign not in ["center", "left", "right"]:
-            return 1
-
         #make sure to copy the original textField so you don't modify the original
         textField = copy.deepcopy(textField)
         
@@ -122,24 +92,23 @@ class TextField(Drawing):
         offset = 0
 
         #iterate through each paragraph in the array
-        for i in range(0, len(textField._paragraphs)):
+        for paragraph in textField._paragraphs:
             indexTracker = 0
             offset = 0
-            tempParagraph = textField._paragraphs[i]
             #provided the text is wider than the target width, start at targetWidth index, the decrement til a space is found
-            while (len(tempParagraph)-indexTracker) > targetWidth:
+            while (len(paragraph)-indexTracker) > targetWidth:
                 offset = 0 #use the offset to find the nearest break in the sentence to create a 'new line'
                 #Note: indexTracker keeps the position of the start of the next new line in the original paragraph
-                while tempParagraph[indexTracker+targetWidth-offset] != ' ':
+                while paragraph[indexTracker+targetWidth-offset] != ' ':
                     offset += 1
                     # to avoid infinite loop, manually insert a breakpoint if you've hit the beginning of the row/line
                     if offset >= targetWidth:
                         offset = 0
-                        tempParagraph = str(tempParagraph[:indexTracker+targetWidth-offset]+" "+tempParagraph[indexTracker+targetWidth-offset:])
-                formattedLines.append(tempParagraph[indexTracker:indexTracker+targetWidth-offset])
+                        paragraph = str(paragraph[:indexTracker+targetWidth-offset]+" "+paragraph[indexTracker+targetWidth-offset:])
+                formattedLines.append(paragraph[indexTracker:indexTracker+targetWidth-offset])
                 indexTracker += targetWidth-offset+1 #+1 to make sure the " " isn't added onto the front of the next line
             # take the left over bit and add it
-            formattedLines.append(tempParagraph[indexTracker:])
+            formattedLines.append(paragraph[indexTracker:])
 
         formattedLines = Drawing(formattedLines)
         formattedLines.bufferAlign(LRAlign, "center", formattedLines.getWidth(), formattedLines.getHeight())
@@ -148,13 +117,6 @@ class TextField(Drawing):
     #Purpose: Converts the paragraphs into Drawing object that's formatted to appear as a table
     #           Priority goes to filling up an entire row before proceeding to next row
     def formatTableWithRowPriority(tableCells, numOfColumns, targetWidth, LRAlign, cellPadding):
-        if type(numOfColumns) is not int or \
-           type(targetWidth) is not int or \
-           type(cellPadding) is not int or \
-           type(tableCells) is not TextField or \
-           LRAlign not in ["center", "left", "right"]:
-            return 1
-
         #make sure to copy the original tableCells so you don't modify the original
         tableCells = copy.deepcopy(tableCells)
 
@@ -176,7 +138,7 @@ class TextField(Drawing):
         # separate cells into appropriate rows
         rows = []
         currentRow = -1
-        for i in range(0, len(tableCells._paragraphs)):
+        for i in range(len(tableCells._paragraphs)):
             # keep track of which row we're in
             if i%numOfColumns == 0:
                 currentRow += 1
@@ -184,8 +146,6 @@ class TextField(Drawing):
             # format each row, this step is required for text wrap and proper alignement
             formattedCell = TextField.formatParagraph(TextField([tableCells._paragraphs[i]]), widthPerColumn, LRAlign)
             formattedCell.bufferAlign(LRAlign, "top", widthPerColumn, formattedCell.getHeight())
-            #TEST
-            #formattedCell.draw()
             rows[currentRow].append(formattedCell)
 
         # buffer each cell to the max height of that row
@@ -201,13 +161,6 @@ class TextField(Drawing):
     #           Priority goes to filling up an entire column before proceeding to next one
     #           Table is formatted to spread paragraphs/cells as evenly as possible over each column
     def formatTableWithColumnPriority(tableCells, numOfColumns, targetWidth, LRAlign, cellPadding):
-        if type(numOfColumns) is not int or \
-           type(targetWidth) is not int or \
-           type(cellPadding) is not int or \
-           type(tableCells) is not TextField or \
-           LRAlign not in ["center", "left", "right"]:
-            return 1
-
         #make sure to copy the original tableCells so you don't modify the original
         tableCells = copy.deepcopy(tableCells)
 
@@ -228,7 +181,7 @@ class TextField(Drawing):
         # separate cells into appropriate columns
         columns = []
         currentColumn = -1
-        for i in range(0, len(tableCells._paragraphs)):
+        for i in range(len(tableCells._paragraphs)):
             # keep track of which column we're in
             if i%numOfCellsPerColumn == 0:
                 currentColumn += 1
@@ -253,14 +206,6 @@ class TextField(Drawing):
 
     #Purpose: implements formatOptionsIntoRows but with a title above the options
     def formatTableWithRowPriorityWithTitle(tableCells, numOfColumns, targetWidth, LRAlign, title, titleAlign, cellPadding):
-        if type(numOfColumns) is not int or \
-           type(targetWidth) is not int or \
-           type(tableCells) is not TextField or \
-           LRAlign not in ["center", "left", "right"]or \
-           type(title) is not TextField or \
-           titleAlign not in ["center", "left", "right"]:
-            return 1
-
         #make sure the total width isn't less than num of columns, taking in to account cell padding
         # note: minimum space for a single column is 1, so make sure the targetwidth can accomodate that
         # note: this should be done before formatting to make sure title isn't unnecessarily squished if targetWidth changes
@@ -270,20 +215,10 @@ class TextField(Drawing):
         titleDrawing = TextField.formatParagraph(title, targetWidth, titleAlign)
         optionsDrawing = TextField.formatTableWithRowPriority(tableCells, numOfColumns, targetWidth, LRAlign, cellPadding)
 
-        #print("TEST: type(titleDrawing):"+str(type(titleDrawing))+", type(optionsDrawing):"+str(type(optionsDrawing)))
-
         return Drawing.combineIntoColumn([titleDrawing, optionsDrawing], titleAlign, cellPadding)
 
     #Purpose: implements formatOptionsIntoRows but with a title above the options
     def formatTableWithColumnPriorityWithTitle(tableCells, numOfColumns, targetWidth, LRAlign, title, titleAlign, cellPadding):
-        if type(numOfColumns) is not int or \
-           type(targetWidth) is not int or \
-           type(tableCells) is not TextField or \
-           LRAlign not in ["center", "left", "right"]or \
-           type(title) is not TextField or \
-           titleAlign not in ["center", "left", "right"]:
-            return 1
-
         #make sure the total width isn't less than num of columns, taking in to account cell padding
         # note: minimum space for a single column is 1, so make sure the targetwidth can accomodate that
         # note: this should be done before formatting to make sure title isn't unnecessarily squished if targetWidth changes
@@ -293,26 +228,10 @@ class TextField(Drawing):
         titleDrawing = TextField.formatParagraph(title, targetWidth, titleAlign)
         optionsDrawing = TextField.formatTableWithColumnPriority(tableCells, numOfColumns, targetWidth, LRAlign, cellPadding)
 
-        #print("TEST: type(titleDrawing):"+str(type(titleDrawing))+", type(optionsDrawing):"+str(type(optionsDrawing)))
-
         return Drawing.combineIntoColumn([titleDrawing, optionsDrawing], titleAlign, cellPadding)
     
     #Purpose: Returns a Drawing that uses another drawing as a bullet point to each paragraph
     def formatWithDrawingBulletsOnLeft(textField, bulletDrawing, LRAlign, TBAlign, targetWidth, indentationBetweenBulletAndText, paddingBetweenBullets):
-        if type(textField) is not TextField or \
-           type(bulletDrawing) is not Drawing or \
-           type(LRAlign) is not str or \
-           LRAlign not in ["left", "center", "right"] or \
-           type(TBAlign) is not str or \
-           TBAlign not in ["top", "center", "bottom"] or \
-           type(targetWidth) is not int or \
-           targetWidth < 0 or \
-           type(indentationBetweenBulletAndText) is not int or \
-           indentationBetweenBulletAndText < 0 or \
-           type(paddingBetweenBullets) is not int or \
-           paddingBetweenBullets < 0:
-            return 1
-
         # find out the width of the drawing in order to calculate how much space is left for the rest of the paragraph
         bulletWidth = bulletDrawing.getWidth()
         paragraphWidth = targetWidth - bulletWidth - indentationBetweenBulletAndText
@@ -325,26 +244,11 @@ class TextField(Drawing):
             tempParagraph = TextField.formatParagraph(TextField([paragraph]), paragraphWidth, LRAlign)
             listOfBullettedParagraphs.append(Drawing.combineIntoRow([bulletDrawing, tempParagraph], TBAlign, indentationBetweenBulletAndText))
         
-
         # return the entire list after combining into a column
         return Drawing.combineIntoColumn(listOfBullettedParagraphs, LRAlign, paddingBetweenBullets)
     
     #Purpose: Returns a Drawing that uses another drawing as a bullet point to each paragraph
     def formatWithDrawingBulletsOnRight(textField, bulletDrawing, LRAlign, TBAlign, targetWidth, indentationBetweenBulletAndText, paddingBetweenBullets):
-        if type(textField) is not TextField or \
-           type(bulletDrawing) is not Drawing or \
-           type(LRAlign) is not str or \
-           LRAlign not in ["left", "center", "right"] or \
-           type(TBAlign) is not str or \
-           TBAlign not in ["top", "center", "bottom"] or \
-           type(targetWidth) is not int or \
-           targetWidth < 0 or \
-           type(indentationBetweenBulletAndText) is not int or \
-           indentationBetweenBulletAndText < 0 or \
-           type(paddingBetweenBullets) is not int or \
-           paddingBetweenBullets < 0:
-            return 1
-
         # find out the width of the drawing in order to calculate how much space is left for the rest of the paragraph
         bulletWidth = bulletDrawing.getWidth()
         paragraphWidth = targetWidth - bulletWidth - indentationBetweenBulletAndText
@@ -357,6 +261,5 @@ class TextField(Drawing):
             tempParagraph = TextField.formatParagraph(TextField([paragraph]), paragraphWidth, LRAlign)
             listOfBullettedParagraphs.append(Drawing.combineIntoRow([tempParagraph, bulletDrawing], TBAlign, indentationBetweenBulletAndText))
         
-
         # return the entire list after combining into a column
         return Drawing.combineIntoColumn(listOfBullettedParagraphs, LRAlign, paddingBetweenBullets)
