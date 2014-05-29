@@ -43,12 +43,8 @@ input("rightKitty.getRow(0)")
 print(str(rightKitty.getRow(0)))
 print()
 
-input("rightKitty.getRow(100)")
-print(str(rightKitty.getRow(100)))
-print()
-
 input("rightKitty.setDrawing(bat)")
-print(str(rightKitty.setDrawing(bat)))
+rightKitty.setDrawing(bat)
 print()
 
 input("rightKitty.getDrawing()")
@@ -64,7 +60,7 @@ print(str(rightKitty.getOriginal()))
 print()
 
 input("rightKitty.resetDrawing()")
-print(str(rightKitty.resetDrawing()))
+rightKitty.resetDrawing()
 print()
 
 input("rightKitty.draw()")
@@ -72,7 +68,7 @@ rightKitty.draw()
 print()
 
 input("rightKitty.setOriginal(bat)")
-print(str(rightKitty.setOriginal(bat)))
+rightKitty.setOriginal(bat)
 print()
 
 input("rightKitty.getOriginal()")
@@ -84,7 +80,7 @@ rightKitty.draw()
 print()
 
 input("rightKitty.resetDrawing()")
-print(str(rightKitty.resetDrawing()))
+rightKitty.resetDrawing()
 print()
 
 input("rightKitty.draw()")
@@ -92,7 +88,7 @@ rightKitty.draw()
 print()
 
 input("rightKitty.setRow(2, 'bwahahaha')")
-print(str(rightKitty.setRow(2, 'bwahahaha')))
+rightKitty.setRow(2, 'bwahahaha')
 print()
 
 input("rightKitty.draw()")
@@ -100,11 +96,11 @@ rightKitty.draw()
 print()
 
 input("rightKitty.setOriginal(dRightKitty)")
-print(str(rightKitty.setOriginal(dRightKitty)))
+rightKitty.setOriginal(dRightKitty)
 print()
 
 input("rightKitty.resetDrawing()")
-print(str(rightKitty.resetDrawing()))
+rightKitty.resetDrawing()
 print()
 
 input("rightKitty.draw()")
@@ -131,10 +127,6 @@ input("rightKitty.getWidth()")
 print(str(rightKitty.getWidth()))
 print()
 
-input("rightKitty.howManyCanFit(-5, -5)")
-print(str(rightKitty.howManyCanFit(-5, -5)))
-print()
-
 input("rightKitty.howManyCanFit(0, 0)")
 print(str(rightKitty.howManyCanFit(0, 0)))
 print()
@@ -155,32 +147,12 @@ input("rightKitty.howManyCanFit(2000, 2000)")
 print(str(rightKitty.howManyCanFit(2000, 2000)))
 print()
 
-input("rightKitty.numOfCharsInRowFromRight(-50, ' ')")
-print(str(rightKitty.numOfCharsInRowFromRight(-50, " ")))
-print()
-
-input("rightKitty.numOfCharsInRowFromRight(-5, ' ')")
-print(str(rightKitty.numOfCharsInRowFromRight(-5, " ")))
-print()
-
 input("rightKitty.numOfCharsInRowFromRight(0, ' ')")
 print(str(rightKitty.numOfCharsInRowFromRight(0, " ")))
 print()
 
 input("rightKitty.numOfCharsInRowFromRight(5, 'g')")
 print(str(rightKitty.numOfCharsInRowFromRight(5, "g")))
-print()
-
-input("rightKitty.numOfCharsInRowFromRight(100, ' ')")
-print(str(rightKitty.numOfCharsInRowFromRight(100, " ")))
-print()
-
-input("rightKitty.numOfCharsInRowFromLeft(-50, ' ')")
-print(str(rightKitty.numOfCharsInRowFromLeft(-50, " ")))
-print()
-
-input("rightKitty.numOfCharsInRowFromLeft(-5, ' ')")
-print(str(rightKitty.numOfCharsInRowFromLeft(-5, " ")))
 print()
 
 input("rightKitty.numOfCharsInRowFromLeft(0, ' ')")
@@ -191,36 +163,12 @@ input("rightKitty.numOfCharsInRowFromLeft(5, 'g')")
 print(str(rightKitty.numOfCharsInRowFromLeft(5, "g")))
 print()
 
-input("rightKitty.numOfCharsInRowFromLeft(100, ' ')")
-print(str(rightKitty.numOfCharsInRowFromLeft(100, " ")))
-print()
-
-input("rightKitty.numOfCharsInColumnFromTop(-50, ' ')")
-print(str(rightKitty.numOfCharsInColumnFromTop(-50, " ")))
-print()
-
-input("rightKitty.numOfCharsInColumnFromTop(-5, ' ')")
-print(str(rightKitty.numOfCharsInColumnFromTop(-5, " ")))
-print()
-
 input("rightKitty.numOfCharsInColumnFromTop(0, ' ')")
 print(str(rightKitty.numOfCharsInColumnFromTop(0, " ")))
 print()
 
 input("rightKitty.numOfCharsInColumnFromTop(5, 'g')")
 print(str(rightKitty.numOfCharsInColumnFromTop(5, "g")))
-print()
-
-input("rightKitty.numOfCharsInColumnFromTop(100, ' ')")
-print(str(rightKitty.numOfCharsInColumnFromTop(100, " ")))
-print()
-
-input("rightKitty.numOfCharsInColumnFromBottom(-50, ' ')")
-print(str(rightKitty.numOfCharsInColumnFromBottom(-50, " ")))
-print()
-
-input("rightKitty.numOfCharsInColumnFromBottom(-5, ' ')")
-print(str(rightKitty.numOfCharsInColumnFromBottom(-5, " ")))
 print()
 
 input("rightKitty.numOfCharsInColumnFromBottom(0, ' ')")
@@ -231,18 +179,6 @@ input("rightKitty.numOfCharsInColumnFromBottom(5, 'g')")
 print(str(rightKitty.numOfCharsInColumnFromBottom(5, "g")))
 print()
 
-input("rightKitty.numOfCharsInColumnFromBottom(100, ' ')")
-print(str(rightKitty.numOfCharsInColumnFromBottom(100, " ")))
-print()
-
-input("rightKitty.isRowEmpty(-50)")
-print(str(rightKitty.isRowEmpty(-50)))
-print()
-
-input("rightKitty.isRowEmpty(-5)")
-print(str(rightKitty.isRowEmpty(-5)))
-print()
-
 input("rightKitty.isRowEmpty(0)")
 print(str(rightKitty.isRowEmpty(0)))
 print()
@@ -251,28 +187,12 @@ input("rightKitty.isRowEmpty(5)")
 print(str(rightKitty.isRowEmpty(5)))
 print()
 
-input("rightKitty.isRowEmpty(100)")
-print(str(rightKitty.isRowEmpty(100)))
-print()
-
-input("rightKitty.numOfCharInRow(-50, ' ')")
-print(str(rightKitty.numOfCharInRow(-50, " ")))
-print()
-
-input("rightKitty.numOfCharInRow(-5, ' ')")
-print(str(rightKitty.numOfCharInRow(-5, " ")))
-print()
-
 input("rightKitty.numOfCharInRow(0, ' ')")
 print(str(rightKitty.numOfCharInRow(0, " ")))
 print()
 
 input("rightKitty.numOfCharInRow(5, 'g')")
 print(str(rightKitty.numOfCharInRow(5, "g")))
-print()
-
-input("rightKitty.numOfCharInRow(100, ' ')")
-print(str(rightKitty.numOfCharInRow(100, " ")))
 print()
 
 input("rightKitty.numOfCharInDrawing('g')")
@@ -304,37 +224,37 @@ input("Test Case B2 - Abstract Setters")
 print()
 
 input("rightKitty.trim() + draw()")
-print(str(rightKitty.trim()))
+rightKitty.trim()
 rightKitty.draw()
 print()
 
 input("rightKitty.bufferAlign('center', 'center', 0, 0) + draw()")
-print(str(rightKitty.bufferAlign('center', 'center', 0, 0)))
+rightKitty.bufferAlign('center', 'center', 0, 0)
 rightKitty.draw()
 print()
 
 input("rightKitty.resetDrawing() + draw()")
-print(str(rightKitty.resetDrawing()))
+rightKitty.resetDrawing()
 rightKitty.draw()
 print()
 
 input("rightKitty.bufferAlign('left', 'bottom', 10, 10) + draw()")
-print(str(rightKitty.bufferAlign('left', 'bottom', 10, 10)))
+rightKitty.bufferAlign('left', 'bottom', 10, 10)
 rightKitty.draw()
 print()
 
 input("rightKitty.resetDrawing() + draw()")
-print(str(rightKitty.resetDrawing()))
+rightKitty.resetDrawing()
 rightKitty.draw()
 print()
 
 input("rightKitty.bufferAlign('right', 'top', 50, 50) + draw()")
-print(str(rightKitty.bufferAlign('right', 'top', 50, 50)))
+rightKitty.bufferAlign('right', 'top', 50, 50)
 rightKitty.draw()
 print()
 
 input("rightKitty.trim() + draw()")
-print(str(rightKitty.trim()))
+rightKitty.trim()
 rightKitty.draw()
 print()
 
@@ -345,8 +265,8 @@ print()
 ### Test Case C1  - Group Getters ###
 #####################################
 
-input("Test Case C1  - Group Getters")
-print()
+##input("Test Case C1  - Group Getters")
+##print()
 
 
 

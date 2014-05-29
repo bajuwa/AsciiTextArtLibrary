@@ -70,8 +70,8 @@ class Drawing:
         
     #Purpose: Draws the drawing to the screen as an image, not as an array
     def draw(self):
-        for i in range(len(self._drawing)):
-            print(self._drawing[i])
+        for row in self._drawing:
+            print(row)
         return
     
     #Purpose: Retrieves height by calculating the number of rows, aka the number of string elements in the array    
@@ -82,8 +82,8 @@ class Drawing:
     #Note: deals with the maximum to account for a non-buffered image with irregular width
     def getWidth(self):
         widthList = []
-        for i in range(self.getHeight()):
-            widthList.append(len(self._drawing[i]))
+        for row in self._drawing:
+            widthList.append(len(row))
         return max(widthList)
     
     #Purpose: returns a 2-element array specifying how many times the drawing can fit in a row of targetWidth and a column of targetHeight
@@ -108,8 +108,8 @@ class Drawing:
     def numOfCharsInRowFromLeft(self, rowIndex, char):
         count = 0
         tempRow = self._drawing[rowIndex]
-        for i in range(len(tempRow)): #iterate through chars in row, left to right
-            if tempRow[i] == char:
+        for rowChar in tempRow: #iterate through chars in row, left to right
+            if rowChar == char:
                 count += 1
             else:
                 return count
@@ -118,9 +118,8 @@ class Drawing:
     #Purpose: Returns the number of instances of a certain char are found in a column, starting from the bottom
     def numOfCharsInColumnFromTop(self, columnIndex, char):
         count = 0
-        for i in range(len(self._drawing)): #iterate through rows, top to bottom
-            tempRow = self._drawing[i]
-            if tempRow[columnIndex] == char:
+        for row in self._drawing: #iterate through rows, top to bottom
+            if row[columnIndex] == char:
                 count += 1
             else:
                 return count
@@ -141,8 +140,8 @@ class Drawing:
     def isRowEmpty(self, rowIndex):
         #If, by scanning through the row, it hits the end of the row before a non-whitespace character, it's an empty row
         tempRow = self._drawing[rowIndex]
-        for i in range(len(tempRow)):
-            if tempRow[i] != " ":
+        for char in tempRow:
+            if char != " ":
                 return False
         return True
 
@@ -166,6 +165,8 @@ class Drawing:
     ##############################
     #Warning: These methods directly modify _drawing!
 
+    ##TODO: turn alignment options in to enums
+
     #Purpose: Trims excess whitespace from edges so drawing is resized to smallest possible dimensions
     #Notes: As an example, it will take a buffered image and get rid of the whitespace that might have been added
     def trim(self):
@@ -181,7 +182,7 @@ class Drawing:
         #then trim sides
         emptyRightSpace = []
         emptyLeftSpace = []
-        for i in range(0, self.getHeight()):
+        for i in range(self.getHeight()):
             emptyRightSpace.append(self.numOfCharsInRowFromRight(i, " "))
             emptyLeftSpace.append(self.numOfCharsInRowFromLeft(i, " "))
         self.bufferAlign("left", "center", self.getWidth()-min(emptyRightSpace), self.getHeight())
@@ -192,15 +193,8 @@ class Drawing:
 
     #Purpose: adds/removes rows/characters to fit a certain dimension and alignment
     #Note: RLalign refers to "left", "center", or "right"; TBalign refers to "top", "center", or "bottom"
-    def bufferAlign(self, LRAlign, TBAlign, targetWidth, targetHeight):
-        if LRAlign not in ["center", "left", "right"] or \
-           TBAlign not in ["center", "top", "bottom"] or \
-           type(targetWidth) is not int or \
-           type(targetHeight) is not int:
-            print("Error: parameter type mismatch in Drawing.bufferAlign")
-            return 1
-        #Make height changes
-        differenceInHeights = targetHeight - len(self.getDrawing())
+    def bufferAlign(self, LRAlign, TBAlign, targetWidth, targetHeight):        #Make height changes
+        differenceInHeights = targetHeight - len(self._drawing)
         topBuffer = math.ceil(differenceInHeights/2)
         bottomBuffer = math.floor(differenceInHeights/2)
         if TBAlign == "top":
@@ -223,9 +217,9 @@ class Drawing:
 
         
         #Make width changes
-        for i in range(0, len(self._drawing)):
+        for i in range(len(self._drawing)):
             #calculate adjustments - if difference is odd, an extra space will be added to the right/top
-            differenceInWidth = targetWidth - len(self.getRow(i))
+            differenceInWidth = targetWidth - len(self._drawing[i])
             rightBuffer = math.ceil(differenceInWidth/2)
             leftBuffer = math.floor(differenceInWidth/2)
             tempRow = self._drawing[i]
@@ -253,13 +247,7 @@ class Drawing:
     #Purpose: Adds a simple, 1-char width border around the edge of a drawing
     #Note: To remove the border, simply trim it to 2 less width/height
     def addBorder(self, border, padding):
-        #run through a check to make sure you're attaching a frame
-        if type(border) is not Border or \
-           type(padding) is not int:
-            print("Error: parameter type mismatch in Drawing.addBorder")
-            return 1
-
-        #now set up and add the border around the edge of the drawing
+        # set up and add the border around the edge of the drawing
         borderedDrawing = []
         height = self.getHeight()
         width = self.getWidth()
@@ -269,8 +257,8 @@ class Drawing:
         borderedDrawing.append(arrayOfCorners[0] + arrayOfBorders[0] * (width+(padding*2)) + arrayOfCorners[1])
         borderedDrawing.extend([arrayOfBorders[3] + " "*(width+(padding*2)) + arrayOfBorders[1]]*padding)
         # attaches the contents of the display
-        for i in range(0, height):
-            sampleLine = self.getRow(i)
+        for i in range(height):
+            sampleLine = self._drawing(i)
             # attaches the appropriate line of the objects from top to bottom
             borderedDrawing.append(arrayOfBorders[3] + " "*padding + sampleLine + " "*padding + arrayOfBorders[1])
 
@@ -288,45 +276,24 @@ class Drawing:
 
     #Purpose: Return the max height of drawings given in an array of drawings
     def getMaxHeight(arrayOfDrawings):
-        if type(arrayOfDrawings) is not list:
-            print("Error: parameter type mismatch in Drawing.getMaxHeight")
-            return 1
-        for e in range(0, len(arrayOfDrawings)):
-            if type(arrayOfDrawings[e]) is not Drawing:
-                print("Error: parameter type mismatch in Drawing.getMaxHeight")
-                return 1
         heightsOfDrawings = []
-        for i in range(0, len(arrayOfDrawings)):
-            tempDrawing = arrayOfDrawings[i]
-            heightsOfDrawings.append(tempDrawing.getHeight())
+        for drawing in arrayOfDrawings:
+            heightsOfDrawings.append(drawing.getHeight())
         return max(heightsOfDrawings)
 
     #Purpose: Return the max width of drawings given in an array of drawings
     def getMaxWidth(arrayOfDrawings):
-        if type(arrayOfDrawings) is not list:
-            print("Error: parameter type mismatch in Drawing.getMaxWidth")
-            return 1
-        for e in range(0, len(arrayOfDrawings)):
-            if type(arrayOfDrawings[e]) is not Drawing:
-                print("Error: parameter type mismatch in Drawing.getMaxWidth")
-                return 1
         widthsOfDrawings = []
-        for i in range(0, len(arrayOfDrawings)):
-            tempDrawing = arrayOfDrawings[i]
-            widthsOfDrawings.append(tempDrawing.getWidth())
+        for drawing in arrayOfDrawings:
+            widthsOfDrawings.append(drawing.getWidth())
         return max(widthsOfDrawings)
 
     #Purpose: Returns a coordinate array corresponding to the n-th instance of char in the drawing
     def getCoordOfChar(self, char, nthInstance):
-        if type(char) is not str or\
-           len(char) != 1 or \
-           type(nthInstance) is not int:
-            print("Error: parameter type mismatch in Drawing.getCoordOfChar")
-            return 1
         count = 0
-        for i in range(0, self.getHeight()): #iterate over rows
-            tempRow = self.getRow(i)
-            for j in range(0, self.getWidth()):  #iterate over characters in a row
+        for i in range(self.getHeight()): #iterate over rows
+            tempRow = self._drawing[i]
+            for j in range(self.getWidth()):  #iterate over characters in a row
                 tempChar = tempRow[j]
                 if tempChar == char:
                     count += 1
@@ -338,18 +305,12 @@ class Drawing:
     #Purpose: Turns a drawing into a tiled image within specific requirements of how many in a row/column
     #Notes: Padding refers to how much whitespace is in between each tile image
     def createTiledDrawingFromTileNums(drawing, numInRow, numInColumn, padding):
-        if type(drawing) is not Drawing or \
-           type(numInRow) is not int or \
-           type(numInColumn) is not int or \
-           type(padding) is not int:
-            print("Error: parameter type mismatch in Drawing.createTiledDrawingFromTileNums")
-            return 1
         singleRow = []
-        for i in range(0, numInRow): #must iterate a deepcopy in order to avoid passing by reference
+        for i in range(numInRow): #must iterate a deepcopy in order to avoid passing by reference
             singleRow.append(copy.deepcopy(drawing))
         singleRow = Drawing.combineIntoRow(singleRow, "center", padding)
         tiledImage = []
-        for j in range(0, numInColumn):
+        for j in range(numInColumn):
             tiledImage.append(copy.deepcopy(singleRow))
         tiledImage = Drawing.combineIntoColumn([singleRow] * numInColumn, "center", padding)
         return tiledImage
@@ -357,12 +318,6 @@ class Drawing:
     #Purpose: Turns a drawing into a tiled image within specific WxH dimensions
     #Notes: This image will cut off any excess characters outside the given dimensions
     def createTiledDrawingFromDimensions(drawing, targetWidth, targetHeight, padding):
-        if type(drawing) is not Drawing or \
-           type(targetWidth) is not int or \
-           type(targetHeight) is not int or \
-           type(padding) is not int:
-            print("Error: parameter type mismatch in Drawing.createTiledDrawingFromDimensions")
-            return 1
         numInDimensions = drawing.howManyCanFit(targetWidth, targetHeight)
         tiledDrawing = Drawing.createTiledDrawingFromTileNums(drawing, numInDimensions[0]+1, numInDimensions[1]+1, padding)
         tiledDrawing.bufferAlign("center", "center", targetWidth, targetHeight)
@@ -372,14 +327,6 @@ class Drawing:
     #Note: Will only ignore the CHARs on the outside of the drawing, for example: if char = " ", then only whitespace outside the drawing will be ignored
     #Note: Although it will buffer each image to the same dimensions, its best to do that yourself before calling this function to make sure they align properly
     def overlayDrawings(baseDrawing, overlayDrawing, char, LRAlign, TBAlign):
-        if type(baseDrawing) is not Drawing or \
-           type(overlayDrawing) is not Drawing or \
-           LRAlign not in ["center", "left", "right"] or \
-           TBAlign not in ["center", "top", "bottom"] or \
-           type(char) is not str or \
-           len(char) != 1:
-            print("Error: parameter type mismatch in Drawing.overlayDrawings")
-            return 1
         #make sure they are the same size
         copyDrawings = [copy.deepcopy(baseDrawing), copy.deepcopy(overlayDrawing)]
         copies = Drawing.bufferToSameHeight(copyDrawings, TBAlign, Drawing.getMaxHeight(copyDrawings))
@@ -387,8 +334,8 @@ class Drawing:
         baseCopy = copies[0]
         overlayCopy = copies[1]
 
-        for i in range(0, len(baseCopy.getDrawing())): #iterate over rows
-            for j in range(0, len(baseCopy.getRow(i))): #iterate over columns
+        for i in range(len(baseCopy.getDrawing())): #iterate over rows
+            for j in range(len(baseCopy.getRow(i))): #iterate over columns
                 # use numOfChars to ensure that even intended spaces in the middle of a drawing get copied over
                 if (j >= overlayCopy.numOfCharsInRowFromLeft(i, char)) and (j < (len(overlayCopy.getRow(i)) - overlayCopy.numOfCharsInRowFromRight(i, char))):
                     if (i >= overlayCopy.numOfCharsInColumnFromTop(j, char)) and (i < (overlayCopy.getHeight() - overlayCopy.numOfCharsInColumnFromBottom(j, char))):
@@ -397,42 +344,20 @@ class Drawing:
 
     #Purpose: Buffers each drawing of an array of drawings to the same height
     def bufferToSameHeight(arrayOfDrawings, TBAlign, targetHeight):
-        if type(arrayOfDrawings) is not list or \
-           TBAlign not in ["center", "top", "bottom"] or \
-           type(targetHeight) is not int:
-            print("Error: parameter type mismatch in Drawing.bufferToSameHeight")
-            return 1
-        for e in range(0, len(arrayOfDrawings)):
-            if type(arrayOfDrawings[e]) is not Drawing:
-                print("Error: parameter type mismatch in Drawing.bufferToSameHeight")
-                return 1
         copyDrawings = []
-        for i in range(0, len(arrayOfDrawings)):
-            copyDrawings.append(copy.deepcopy(arrayOfDrawings[i]))
-        for j in range(0, len(copyDrawings)):
-            tempDrawing = copyDrawings[j]
-            tempDrawing.bufferAlign("center", TBAlign, tempDrawing.getWidth(), targetHeight)
-            copyDrawings[j] = tempDrawing
+        for drawing in arrayOfDrawings:
+            copyDrawings.append(copy.deepcopy(drawing).bufferAlign("center", TBAlign, drawing.getWidth(), targetHeight))
         return copyDrawings
     
     #Purpose: Combine an array of drawings, in order, in a row, aligned as specified
     #Notes: combines them edge-to-edge, with a certain amount of padding between each image
     def combineIntoRow(arrayOfDrawings, TBAlign, padding):
-        if type(arrayOfDrawings) is not list or \
-           TBAlign not in ["center", "top", "bottom"] or \
-           type(padding) is not int:
-            print("Error: parameter type mismatch in Drawing.combineIntoRow")
-            return 1
-        for e in range(0, len(arrayOfDrawings)):
-            if type(arrayOfDrawings[e]) is not Drawing:
-                print("Error: parameter type mismatch in Drawing.combineIntoRow")
-                return 1
         copyDrawings = []
-        for i in range(0, len(arrayOfDrawings)):
-            copyDrawings.append(copy.deepcopy(arrayOfDrawings[i]))
+        for drawing in arrayOfDrawings:
+            copyDrawings.append(copy.deepcopy(drawing))
         copyDrawings = Drawing.bufferToSameHeight(copyDrawings, TBAlign, Drawing.getMaxHeight(arrayOfDrawings))
         rootPseudoDrawing = copyDrawings[0].getDrawing()  #takes the first image, and modifies it by extending the strings/rows with that of other drawings
-        for k in range(0, len(rootPseudoDrawing)): #iterate over rows
+        for k in range(len(rootPseudoDrawing)): #iterate over rows
             for l in range(1, len(copyDrawings)): #iterate over drawings
                 #since we start at index 1, add befores before each image (this also prevents excess buffering at the end
                 rootPseudoDrawing[k] += " " * padding
@@ -443,27 +368,19 @@ class Drawing:
 
     #Purpose: Buffers each drawing to be combined into a row of a specific width
     def combineIntoRowWidth(arrayOfDrawings, LRAlign, TBAlign, targetWidth):
-        if type(arrayOfDrawings) is not list or \
-           LRAlign not in ["center", "left", "right"] or \
-           TBAlign not in ["center", "top", "bottom"] or \
-           type(targetHeight) is not int:
-            print("Error: parameter type mismatch in Drawing.combineIntoRowWidth")
-            return 1
-        for e in range(0, len(arrayOfDrawings)):
-            if type(arrayOfDrawings[e]) is not Drawing:
-                print("Error: parameter type mismatch in Drawing.combineIntoRowWidth")
-                return 1
         bufferedRow = copy.deepcopy(arrayOfDrawings) #make sure to copy to you're not modifying the original
         #calculate total width of combined drawings
         totalWidth = 0
-        for i in range(0, len(bufferedRow)):
-            totalWidth += bufferedRow[i].getWidth()
+        for drawing in bufferedRow:
+            totalWidth += drawing.getWidth()
         differenceInWidth = targetWidth - totalWidth
         #calculate how much each drawing gets buffered
         individualBufferPadding = math.floor(differenceInWidth/len(bufferedRow))
         #buffer each image
-        for j in range(0, len(bufferedRow)):
-            bufferedRow[j].bufferAlign(LRAlign, TBAlign, bufferedRow[j].getWidth() + individualBufferPadding, bufferedRow[j].getHeight())
+        for drawing in bufferedRow:
+            drawing.bufferAlign(LRAlign, TBAlign,
+                                drawing.getWidth() + individualBufferPadding,
+                                drawing.getHeight())
         #Note: padding = 0 because focus is on equally spaced images, not padding in between them
         #since individualBufferPadding was rounded down, make sure to return the image after it's been buffered to the correct width
         bufferedRow = Drawing.combineIntoRow(bufferedRow, TBAlign, 0)
@@ -472,39 +389,21 @@ class Drawing:
 
     #Purpose: Returns an array of drawings buffered to the same given width
     def bufferToSameWidth(arrayOfDrawings, LRAlign, targetWidth):
-        if type(arrayOfDrawings) is not list or \
-           LRAlign not in ["center", "left", "right"] or \
-           type(targetWidth) is not int:
-            print("Error: parameter type mismatch in Drawing.bufferToSameWidth")
-            return 1
-        for e in range(0, len(arrayOfDrawings)):
-            if type(arrayOfDrawings[e]) is not Drawing:
-                print("Error: parameter type mismatch in Drawing.bufferToSameWidth")
-                return 1
         copyDrawings = copy.deepcopy(arrayOfDrawings)
         maxWidth = Drawing.getMaxWidth(copyDrawings)
         #buffer each image to the same height
-        for i in range(0, len(copyDrawings)):
+        for drawing in copyDrawings:
             #Note: Does not change height, so TBAlign is irrelevant and default to "center"
-            copyDrawings[i].bufferAlign(LRAlign, "center", maxWidth, copyDrawings[i].getHeight()) 
+            drawing.bufferAlign(LRAlign, "center", maxWidth, drawing.getHeight()) 
         return copyDrawings
 
     #Purpose: Returns a drawing that is composed of 
     def combineIntoColumn(arrayOfDrawings, LRAlign, padding):
-        if type(arrayOfDrawings) is not list or \
-           LRAlign not in ["center", "left", "right"] or \
-           type(padding) is not int:
-            print("Error: parameter type mismatch in Drawing.combineIntoColumn")
-            return 1
-        for e in range(0, len(arrayOfDrawings)):
-            if type(arrayOfDrawings[e]) is not Drawing:
-                print("Error: parameter type mismatch in Drawing.combineIntoColumn")
-                return 1
         copyDrawings = copy.deepcopy(arrayOfDrawings)
         maxWidth = Drawing.getMaxWidth(copyDrawings)
         bufferedColumn = []
         #Buffer each image and add it to the column
-        for i in range(0, len(copyDrawings)):
+        for i in range(len(copyDrawings)):
             copyDrawings[i].bufferAlign(LRAlign, "center", maxWidth, copyDrawings[i].getHeight())
             bufferedColumn.extend(copyDrawings[i].getDrawing())
             if padding > 0 and i != len(copyDrawings)-1:
@@ -513,20 +412,11 @@ class Drawing:
 
     #Purpose: Returns a column with each drawing buffered be spread equally over a given height
     def combineIntoColumnHeight(arrayOfDrawings, LRAlign, TBAlign, targetHeight):
-        if type(arrayOfDrawings) is not list or \
-           LRAlign not in ["center", "left", "right"] or \
-           TBAlign not in ["center", "top", "bottom"] or \
-           type(targetHeight) is not int:
-            print("Error: parameter type mismatch in Drawing.combineIntoColumnHeight")
-            return 1
-        for e in range(0, len(arrayOfDrawings)):
-            if type(arrayOfDrawings[e]) is not Drawing:
-                return Drawing([""])
         copyDrawings = copy.deepcopy(arrayOfDrawings)
         #figure out the total height of all the drawings being combined
         totalHeight = 0
-        for i in range(0, len(copyDrawings)):
-            totalHeight += copyDrawings[i].getHeight()
+        for drawing in copyDrawings:
+            totalHeight += drawing.getHeight()
         #calculate how much each drawing gets buffered to fit the total height
         #Note: use this method of individual buffers to ensure that even if a large image is combined with a smaller one,
         # they are edited according to their individual sizes, not to a general width
@@ -541,13 +431,6 @@ class Drawing:
 
     #Purpose: Compresses 2 drawings side by side while removing excess whitespace between drawings
     def compressHorizontally(leftDrawing, rightDrawing, TBAlign, padding, targetHeight):
-        if type(leftDrawing) is not Drawing or \
-           type(rightDrawing) is not Drawing or \
-           TBAlign not in ["center", "top", "bottom"] or \
-           type(padding) is not int or \
-           type(targetHeight) is not int:
-            print("Error: parameter type mismatch in Drawing.compressHorizontally")
-            return 1
         #create copy/base for the upcoming edits
         bufferedDrawings = Drawing.bufferToSameHeight([copy.deepcopy(leftDrawing), copy.deepcopy(rightDrawing)], TBAlign, targetHeight)
         tempLeft = bufferedDrawings[0]
@@ -557,17 +440,17 @@ class Drawing:
         excessWhitespace = len(tempLeft.getDrawing()[0]) + len(tempRight.getDrawing()[0]) #sets excess whitespace to max possible length
 
         #find out how much whitespace to trim out from between images
-        for i in range(0, tempLeft.getHeight()):
+        for i in range(tempLeft.getHeight()):
             totalLinesWS = tempLeft.numOfCharsInRowFromRight(i, " ") + tempRight.numOfCharsInRowFromLeft(i, " ")
             if totalLinesWS < excessWhitespace:
                     excessWhitespace = totalLinesWS
 
         #now remove the excess whitespace from each image
         compressed = []
-        for i in range(0, tempLeft.getHeight()):  #iterate through each row of the drawing, from top to bottom
+        for i in range(tempLeft.getHeight()):  #iterate through each row of the drawing, from top to bottom
             tempValue = 0
-            leftLine = tempLeft.getDrawing()[i]
-            rightLine = tempRight.getDrawing()[i]
+            leftLine = tempLeft._drawing[i]
+            rightLine = tempRight._drawing[i]
             while (tempValue < excessWhitespace-padding) and (leftLine[-1] == " "):
                 #first remove as much as possible from left drawing
                 leftLine = leftLine[:-1]
@@ -583,14 +466,6 @@ class Drawing:
 
     #Purpose: Compresses an array of drawings into a row while deleting excess whitespace between drawings
     def compressIntoRow(arrayOfDrawings, TBAlign, padding):
-        if type(arrayOfDrawings) is not list or \
-           TBAlign not in ["center", "top", "bottom"] or \
-           type(padding) is not int:
-            print("Error: parameter type mismatch in Drawing.compressIntoRow")
-            return 1
-        for e in range(0, len(arrayOfDrawings)):
-            if type(arrayOfDrawings[e]) is not Drawing:
-                return Drawing([""])
         bufferedDrawings = Drawing.bufferToSameHeight(arrayOfDrawings, TBAlign, Drawing.getMaxHeight(arrayOfDrawings))
         while len(bufferedDrawings) > 2:
             bufferedDrawings = [Drawing.compressHorizontally(bufferedDrawings[0], bufferedDrawings[1]), \
@@ -605,13 +480,6 @@ class Drawing:
     #Purpose: Compresses 2 drawings on top of eachother while removing excess whitespace between them
     #Note: BROKEN FOR NOW.  create overlaydrawings first
     def compressVertically(topDrawing, bottomDrawing, LRAlign, padding, targetWidth):
-        if type(topDrawing) is not Drawing or \
-           type(bottomDrawing) is not Drawing or \
-           LRAlign not in ["center", "left", "right"] or \
-           type(padding) is not int or \
-           type(targetWidth) is not int:
-            print("Error: parameter type mismatch in Drawing.compressVertically")
-            return 1
         #create copy/base for the upcoming edits
         bufferedDrawings = Drawing.bufferToSameWidth([copy.deepcopy(topDrawing), copy.deepcopy(bottomDrawing)], LRAlign, targetWidth)
         tempTop = bufferedDrawings[0]
@@ -621,7 +489,7 @@ class Drawing:
         excessWhitespace = tempTop.getHeight() + tempBottom.getHeight() #sets excess whitespace to max possible length
 
         #find out how much whitespace to trim out from between images
-        for i in range(0, tempTop.getWidth()): #iterate over columns
+        for i in range(tempTop.getWidth()): #iterate over columns
             totalColumnsWS = tempTop.numOfCharsInColumnFromBottom(i, " ") + tempBottom.numOfCharsInColumnFromTop(i, " ")
             if totalColumnsWS < excessWhitespace:
                     excessWhitespace = totalColumnsWS
@@ -644,16 +512,6 @@ class Drawing:
 
     #Purpose: Compresses a series of images on top of eachother, eliminating excess whitespace between images, and stacks them from bottom up
     def compressIntoColumnFromBottomUp(arrayOfDrawings, LRAlign, padding, targetWidth):
-        if type(arrayOfDrawings) is not list or \
-           LRAlign not in ["center", "left", "right"] or \
-           type(padding) is not int or \
-           type(targetWidth) is not int:
-            print("Error: parameter type mismatch in Drawing.compressIntoColumnFromBottomUp")
-            return 1
-        for e in range(0, len(arrayOfDrawings)):
-            if type(arrayOfDrawings[e]) is not Drawing:
-                print("Error: parameter type mismatch in Drawing.compressIntoColumnFromBottomUp")
-                return 1
         bufferedDrawings = Drawing.bufferToSameWidth(arrayOfDrawings, LRAlign, targetWidth)
         while len(bufferedDrawings) > 2:
             bufferedDrawings = [Drawing.compressVertically(bufferedDrawings[1], bufferedDrawings[0], LRAlign, padding, targetWidth)]\
@@ -664,16 +522,6 @@ class Drawing:
 
     #Purpose: Compresses a series of images on top of eachother, eliminating excess whitespace between images, and stacks them from bottom up
     def compressIntoColumnFromTopDown(arrayOfDrawings, LRAlign, padding, targetWidth):
-        if type(arrayOfDrawings) is not list or \
-           LRAlign not in ["center", "left", "right"] or \
-           type(padding) is not int or \
-           type(targetWidth) is not int:
-            print("Error: parameter type mismatch in Drawing.compressIntoColumnFromTopDown")
-            return 1
-        for e in range(0, len(arrayOfDrawings)):
-            if type(arrayOfDrawings[e]) is not Drawing:
-                print("Error: parameter type mismatch in Drawing.compressIntoColumnFromTopDown")
-                return 1
         bufferedDrawings = Drawing.bufferToSameWidth(arrayOfDrawings, LRAlign, targetWidth)
         while len(bufferedDrawings) > 2:
             bufferedDrawings = [Drawing.compressVertically(bufferedDrawings[0], bufferedDrawings[1], LRAlign, padding, targetWidth)]\
@@ -692,9 +540,6 @@ class Drawing:
     #Warning! The txt file must be in the same directory as this library when used
     #Warning! Non-txt files are not supported
     def fileIntoDrawings(fileName):
-        if type(fileName) is not str:
-            print("Error: parameter type mismatch in Drawing.fileIntoDrawings")
-            return 1
         if fileName.split(".")[-1] != "txt":
             return 1
 
@@ -720,7 +565,7 @@ class Drawing:
         #distinguish between seperate drawings, and add them to a drawing array
         arrayOfDrawings = []
         tempPseudoDrawing = []
-        for i in range(0, len(rowFormat)):
+        for i in range(len(rowFormat)):
             if rowFormat[i] == "":
                 arrayOfDrawings.append(Drawing(tempPseudoDrawing))
                 tempPseudoDrawing = []
@@ -740,15 +585,12 @@ class Drawing:
     
     #Purpose: Takes a Drawing object and prints to screen the format required for the drawing file
     def returnInFormat(self, drawingName):
-        if type(drawingName) is not str:
-            return 1
-        
         #add the name and initial bracketting
         drawing = []
         drawing.append(str(drawingName) + " = [")
 
         #add string quotes around each ascii art line, complete with comma for the list
-        for row in self.getDrawing():
+        for row in self._drawing:
 
             #add extra \'s to avoid trigger commands (dunno what they;re called)
             if row[-1] == "\\":
@@ -768,26 +610,13 @@ class Drawing:
     #Purpose: Saves multiple (or a single element list of) drawings onto the end of stored_drawings.py file
     #Note: If autoFormat is True, then it will automatically format it in proper "dCamelCaseName", where d stands for Drawing
     def saveMultipleDrawings(fileToAppendTo, arrayOfDrawings, nameOfDrawing, autoFormatBoolean):
-        if type(nameOfDrawing) is not str or \
-           type(fileToAppendTo) is not str or \
-           (fileToAppendTo[-4:] != ".txt" and \
-           fileToAppendTo[-3:] != ".py") or \
-           type(autoFormatBoolean) is not bool or\
-           type(arrayOfDrawings) is not list:
-            print("Error: parameter type mismatch in Drawing.saveMultipleDrawings")
-            return 1
-        for drawing in arrayOfDrawings:
-            if type(drawing) is not Drawing:
-                print("Error: parameter type mismatch in Drawing.saveMultipleDrawings")
-                return 1
-            
         copyArray = copy.deepcopy(arrayOfDrawings)
         copyName = copy.deepcopy(nameOfDrawing)
 
         #format the name to make sure it can be used as a variable name
         if autoFormatBoolean:
             copyName = copyName.split()
-            for i in range(0, len(copyName)):
+            for i in range(len(copyName)):
                 copyName[i] = copyName[i].capitalize()
             copyName = ["d"] + copyName
             copyName = "".join(copyName)
@@ -802,14 +631,14 @@ class Drawing:
                 i += 1
 
         #Format the drawings
-        for j in range(0, len(copyArray)):
+        for j in range(len(copyArray)):
             copyArray[j] = copyArray[j].returnInFormat(copyName+str(j+1))
         
         #Open the file and save drawing
         file = open(fileToAppendTo, 'a')
-        for k in range(0, len(copyArray)):
+        for k in range(len(copyArray)):
             tempDrawing = copyArray[k]
-            for l in range(0, len(tempDrawing)):
+            for l in range(len(tempDrawing)):
                 file.write(tempDrawing[l] + "\n")
             file.write("\n")
 
@@ -820,13 +649,11 @@ class Drawing:
     #Purpose: Takes a drawing, returns the drawing after being flipped horizontally
     #Warning! Best to save the new image after manually checking it first, as not all characters are flippable (D, G, 3, etc...)
     def flipHorizontally(drawing):
-        if type(drawing) is not Drawing:
-            return 1
         #get the original image to be flipped
         flippedImage = copy.deepcopy(drawing.getDrawing())
 
         #iterate through each row, and then each char in row, and flip the characters and order
-        for i in range(0, len(flippedImage)):
+        for i in range(len(flippedImage)):
             flippedImage[i] = Drawing.flipRowHorizontally(flippedImage[i])
 
         #print the new drawing
@@ -834,8 +661,6 @@ class Drawing:
 
     #Purpose: Takes a string (a row of a drawing), reverses the order and flips each image to a mirrored counterpart
     def flipRowHorizontally(string):
-        if type(string) is not str:
-            return 1
         flippedRow = ""
         #iterate through the original row, adding them to the final product in reverse order
         for i in range(len(string)-1, -1, -1):
@@ -845,10 +670,6 @@ class Drawing:
 
     #Purpose: Takes a char, and returns the flipped version if it has one (if not, the original char is returned)
     def flipCharHorizontally(char):
-        if type(char) is not str or \
-           len(char) != 1:
-            return 1
-
         #use switch-case to find a reversable char
         if char == "/":
             return "\\"
@@ -887,13 +708,11 @@ class Drawing:
     #Purpose: Takes a drawing, returns the drawing after being flipped horizontally
     #Warning! Best to save the new image after manually checking it first, as not all characters are flippable (D, G, 3, etc...)
     def flipVertically(drawing):
-        if type(drawing) is not Drawing:
-            return 1
         #get the original image to be flipped
         flippedImage = copy.deepcopy(drawing.getDrawing())
 
         #iterate through each row, and then each char in row, and flip the characters and order
-        for i in range(0, len(flippedImage)):
+        for i in range(len(flippedImage)):
             flippedImage[i] = Drawing.flipRowVertically(flippedImage[len(flippedImage)-i-1])
 
         #print the new drawing
@@ -901,21 +720,15 @@ class Drawing:
 
     #Purpose: Takes a string (a row of a drawing), reverses the order and flips each image to a mirrored counterpart
     def flipRowVertically(string):
-        if type(string) is not str:
-            return 1
         flippedRow = ""
         #iterate through the original row, adding them to the final product in reverse order
-        for i in range(0, len(string)):
+        for char in string:
             #uses flipChar to flip each individual character of the string
-            flippedRow += Drawing.flipCharVertically(string[i])
+            flippedRow += Drawing.flipCharVertically(char)
         return flippedRow
 
     #Purpose: Takes a char, and returns the flipped version if it has one (if not, the original char is returned)
     def flipCharVertically(char):
-        if type(char) is not str or \
-           len(char) != 1:
-            return 1
-
         #use switch-case to find a reversable char
         if char == "/":
             return "\\"
