@@ -53,4 +53,5 @@ To do:<br>
 - Since this is an old project from my first couple years of programming, it needs to be refactored to clean up/remove unnecessary code.<br>
 - Rename files to remove versions (residual evidence of pre-github manual version control)<br>
 - Finish adding the 'Font' based features (where user can use textart to create a large font that they can type with)<br>
-- Create proper unit tests and convert current 'tests' into example 'how-to's
+- Create proper unit tests and convert current 'tests' into example 'how-to's<br>
+- Add error/exception handling
